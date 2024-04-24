@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import apiurl from './apiurl';
-import { Pagination } from 'flowbite-react';
+import { Blockquote, Pagination, TextInput } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom'
+import { modalState } from '../context/ModalContext';
+
 
 
 const BlogBox = ({ blog }) => {
@@ -23,6 +25,9 @@ const BlogBox = ({ blog }) => {
                 <p>
                     Published : {parseDate(blog.createdAt)}
                 </p>
+                <p>
+                    Author: {blog?.author?.username || "Anonymous"}
+                </p>
             </div>
         </>
     )
@@ -33,6 +38,8 @@ const AllBlogs = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(null);
     const [blogPerPage, setBlogPerPage] = useState(3); // x blog per page
+
+    const { refresh } = modalState();
 
     const onPageChange = (page) => {
         setCurrentPage(page)
@@ -48,11 +55,12 @@ const AllBlogs = () => {
     }
     useEffect(() => {
         fetchBlogs()
-    }, [currentPage])
+    }, [currentPage, refresh])
     return (
         <>
             <div>
-                <h1 className='text-2xl'>Explore the Blogs</h1>
+                <h1 className='text-2xl'>Explore the Blogs By All Creators:
+                </h1>
                 <div className=''>
                     {blogs.map(blog => (
                         <BlogBox blog={blog} key={blog._id} />

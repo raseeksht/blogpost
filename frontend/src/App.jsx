@@ -8,10 +8,13 @@ import {
 import Home from './components/Home';
 import ModalContextProvider from './context/ModalContext';
 import AlertContextProvider from './context/AlertContext';
+import AuthContextProvider from './context/AuthContext';
+
 import ShowAlert from './components/Alert'
 import IndividualBlog from './components/IndividualBlog';
 import CreateBlogModal from './components/modals/CreateBlogModal';
 import CustomNavbar from './components/CustomNavbar';
+import LoginComponent from './components/LoginComponent';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -20,16 +23,21 @@ function App() {
     <>
       <ModalContextProvider>
         <AlertContextProvider>
-          <ShowAlert />
-          <CustomNavbar />
-          <Routes>
-            <Route path='/' Component={Home} />
-            <Route path="/blog/:blogId" Component={IndividualBlog} />
-          </Routes>
-          <CreateBlogModal />
+          <AuthContextProvider>
 
+
+            <ShowAlert />
+            <CustomNavbar />
+            <Routes>
+              <Route path='/' Component={Home} />
+              <Route path="/blog/:blogId" Component={IndividualBlog} />
+              <Route path='/login' Component={LoginComponent} />
+            </Routes>
+            <CreateBlogModal />
+
+
+          </AuthContextProvider>
         </AlertContextProvider>
-
       </ModalContextProvider>
     </>
   )
