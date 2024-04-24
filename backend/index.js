@@ -16,6 +16,9 @@ app.use(cors());
 
 app.use("/blogs", blogRoutes);
 app.use("/users", userRoutes);
+app.get("/", (req, res) => {
+    res.send('ok');
+})
 
 
 app.use((req, res, next) => {
