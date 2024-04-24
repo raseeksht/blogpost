@@ -18,8 +18,12 @@ const createBlog = asyncHandler(async (req, res) => {
 })
 
 const getAllBLogs = asyncHandler(async (req, res) => {
+    const { pagenumber, blogperpage } = req.query
+
+    const offset = (pagenumber - 1) * blogperpage
+    console.log(offset)
     try {
-        const blogs = await blogModel.find(); //fetcha all available blogs
+        const blogs = await blogModel.find().sort({ createdAt: -1 }).skip(offset).limit(blogperpage)
         res.json(makeResponse("s", "All blog available are here", blogs))
     } catch (err) {
         throw new Error(err?.message || "unknown error occured while fetchin blogs")
@@ -30,7 +34,7 @@ const getBlogById = asyncHandler(async (req, res) => {
     const blogId = req.params.blogId;
 
     try {
-        const blog = await blogModel.find({ _id: blogId });
+        const blog = await blogModel.findOne({ _id: blogId });
         if (!blog) {
             return res.status(404).json(makeResponse("f", "No blog exists with that Id"))
         }
@@ -57,10 +61,15 @@ const deleteBlogById = asyncHandler(async (req, res) => {
 const updateBlogById = asyncHandler(async (req, res) => {
     const blogId = req.params.blogId;
 
+    console.log(blogId)
+
     const { title, content } = req.body;
+
+    console.log(title, content)
 
     try {
         const blog = await blogModel.findOneAndUpdate({ _id: blogId }, { title, content }, { new: true });
+        res.json(makeResponse("s", "blog updated successfully", blog))
     }
     catch (err) {
         throw new Error(err?.message || "error updating blog");
@@ -69,4 +78,14 @@ const updateBlogById = asyncHandler(async (req, res) => {
 })
 
 
-export { createBlog, getAllBLogs, getBlogById, deleteBlogById, updateBlogById };
+const countBlogs = asyncHandler(async (req, res) => {
+    try {
+        const totalBlogCount = await blogModel.countDocuments({});
+        return res.json({ totalBlogs: totalBlogCount });
+    } catch (err) {
+        console.error(err); // Log the error for debugging
+        return res.status(500).json({ message: "Error fetching blog count" }); // Send a generic error response
+    }
+});
+
+export { createBlog, getAllBLogs, getBlogById, deleteBlogById, updateBlogById, countBlogs };
