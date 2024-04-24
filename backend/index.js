@@ -2,6 +2,7 @@ import express from "express";
 import cors from 'cors';
 import { dbConnnect } from './config/dbConfig.js';
 import blogRoutes from './routes/blog.routes.js';
+import userRoutes from './routes/user.routes.js';
 import { configDotenv } from "dotenv";
 
 configDotenv();
@@ -14,7 +15,25 @@ app.use(cors());
 
 
 app.use("/blogs", blogRoutes);
+app.use("/users", userRoutes);
 
+
+app.use((req, res, next) => {
+    const error = new Error(`404 not found: ${req.originalUrl}`)
+    error.status = 404;
+    next(error)
+})
+
+app.use((err, req, res, next) => {
+    res.status(res.statusCode || 500);
+    console.log(err)
+    res.json({
+        error: {
+            message: err.message,
+            stack: process.env.NODE_ENV == "production" ? null : err.stack
+        }
+    })
+})
 
 
 

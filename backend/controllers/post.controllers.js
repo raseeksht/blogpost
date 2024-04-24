@@ -5,14 +5,21 @@ import { makeResponse } from '../helpers/helperFunctions.js';
 
 const createBlog = asyncHandler(async (req, res) => {
     const { title, content } = req.body;
+
+    const query = {
+        title,
+        content,
+        author: req.user ? req.user._id : null
+    }
     try {
-        const blog = await blogModel.create({ title, content });
+        const blog = await blogModel.create(query);
         if (blog) {
-            res.json(makeResponse("s", "Blog Created successfullt", blog))
+            return res.json(makeResponse("s", "Blog Created successfullt", blog))
         } else {
-            res.status(500).json(makeResponse("f", "failed to create new blog"))
+            return res.status(500).json(makeResponse("f", "failed to create new blog"))
         }
     } catch (err) {
+        console.log(err)
         throw new Error(err?.message || "unknown error occured while creating blog")
     }
 })
@@ -21,9 +28,9 @@ const getAllBLogs = asyncHandler(async (req, res) => {
     const { pagenumber, blogperpage } = req.query
 
     const offset = (pagenumber - 1) * blogperpage
-    console.log(offset)
+
     try {
-        const blogs = await blogModel.find().sort({ createdAt: -1 }).skip(offset).limit(blogperpage)
+        const blogs = await blogModel.find().sort({ createdAt: -1 }).skip(offset).limit(blogperpage).populate("author", "username")
         res.json(makeResponse("s", "All blog available are here", blogs))
     } catch (err) {
         throw new Error(err?.message || "unknown error occured while fetchin blogs")
@@ -49,27 +56,37 @@ const getBlogById = asyncHandler(async (req, res) => {
 const deleteBlogById = asyncHandler(async (req, res) => {
     const blogId = req.params.blogId;
 
-    const blog = await blogModel.deleteOne({ _id: blogId });
-    if (blog.deletedCount == 1) {
-        res.status(204).json(makeResponse("s", "Successfully deleted"))
+    try {
+        const blog1 = await blogModel.findOne({ _id: blogId });
+        if (!blog1.author.equals(req.user._id)) {
+            return res.status(403).json(makeResponse("f", "Not Your post to delete"))
+        }
+        const blog = await blogModel.deleteOne({ _id: blogId });
+        if (blog.deletedCount == 1) {
+            res.status(204).json(makeResponse("s", "Successfully deleted"))
+        }
+        else {
+            res.status(400).json(makeResponse("f", "NO such blog with that id"))
+        }
+
+    } catch (err) {
+        throw new Error(err?.message || "Unknown err while deleting");
     }
-    else {
-        res.status(400).json(makeResponse("f", "NO such blog with that id"))
-    }
+
 })
 
 const updateBlogById = asyncHandler(async (req, res) => {
     const blogId = req.params.blogId;
 
-    console.log(blogId)
-
     const { title, content } = req.body;
 
-    console.log(title, content)
-
     try {
-        const blog = await blogModel.findOneAndUpdate({ _id: blogId }, { title, content }, { new: true });
-        res.json(makeResponse("s", "blog updated successfully", blog))
+        const blog = await blogModel.findOneAndUpdate({ _id: blogId, author: req.user._id }, { title, content }, { new: true });
+        if (blog) {
+            res.json(makeResponse("s", "blog updated successfully", blog))
+        } else {
+            res.status(403).json(makeResponse("f", "not your blog to update/edit"))
+        }
     }
     catch (err) {
         throw new Error(err?.message || "error updating blog");

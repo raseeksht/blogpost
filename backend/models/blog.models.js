@@ -8,6 +8,11 @@ const blogSchema = mongoose.Schema({
     content: {
         type: String,
         required: true
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+        default: null
     }
 }, { timestamps: true })
 
