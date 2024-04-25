@@ -11,7 +11,7 @@ const createUser = asyncHandler(async (req, res) => {
     }
     try {
         const result = await userModel.create({
-            username, password
+            username, password, profilePic: `https://api.multiavatar.com/${username}.svg`
         })
 
         const result1 = await userModel.findOne({ _id: result._id }).select("-password")

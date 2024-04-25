@@ -3,6 +3,7 @@ import cors from 'cors';
 import { dbConnnect } from './config/dbConfig.js';
 import blogRoutes from './routes/blog.routes.js';
 import userRoutes from './routes/user.routes.js';
+import commentRoutes from './routes/comment.routes.js';
 import { configDotenv } from "dotenv";
 
 configDotenv();
@@ -16,6 +17,8 @@ app.use(cors());
 
 app.use("/blogs", blogRoutes);
 app.use("/users", userRoutes);
+app.use("/comments", commentRoutes);
+
 app.get("/", (req, res) => {
     res.send('ok');
 })
