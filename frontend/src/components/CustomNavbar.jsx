@@ -1,14 +1,15 @@
 import React from 'react'
 import { Avatar, Dropdown, Navbar } from "flowbite-react";
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { authState } from '../context/AuthContext';
 import LoginComponent from './LoginComponent';
 
 
 const CustomNavbar = () => {
+    const location = useLocation();
     const { isLoggedIn, user, logout } = authState();
     return (
-        <Navbar fluid rounded>
+        <Navbar fluid rounded className='bg-slate-300'>
             <Navbar.Brand href="https://flowbite-react.com">
                 <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Awesome Blogger</span>
             </Navbar.Brand>
@@ -34,10 +35,10 @@ const CustomNavbar = () => {
                 <Navbar.Toggle />
             </div>
             <Navbar.Collapse>
-                <Navbar.Link as={Link} to="/" active>
+                <Navbar.Link as={Link} to="/" active={location.pathname == "/"}>
                     Home
                 </Navbar.Link>
-                <Navbar.Link as={Link} to="/about">About</Navbar.Link>
+                <Navbar.Link as={Link} to="/about" active={location.pathname == "/about"}>About</Navbar.Link>
             </Navbar.Collapse>
         </Navbar>
     );

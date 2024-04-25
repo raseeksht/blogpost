@@ -15,6 +15,7 @@ import IndividualBlog from './components/IndividualBlog';
 import CreateBlogModal from './components/modals/CreateBlogModal';
 import CustomNavbar from './components/CustomNavbar';
 import LoginComponent from './components/LoginComponent';
+import About from './components/About';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -30,6 +31,7 @@ function App() {
             <CustomNavbar />
             <Routes>
               <Route path='/' Component={Home} />
+              <Route path='/about' Component={About} />
               <Route path="/blog/:blogId" Component={IndividualBlog} />
               <Route path='/login' Component={LoginComponent} />
             </Routes>
