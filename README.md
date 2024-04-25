@@ -1,6 +1,7 @@
 # BlogPost
 
-## Tech Stack : MERN
+## Tech Stack : MERN Stack
+
 
 ## Features
 
@@ -16,7 +17,7 @@
 ```
 git clone https://github.com/raseeksht/blogpost.git
 cd blogpost
-mv .env.sample .env
+mv backend/.env.sample backend/.env
 ```
 
 *Note : mongodb should be installed. if not, use mongo atlas. create `MONGO_URI` environment variable in `.env` file or your pc environment variable
