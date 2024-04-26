@@ -1,4 +1,5 @@
 import mongoose, { mongo } from "mongoose";
+import commentModel from "./comments.models.js";
 
 const blogSchema = mongoose.Schema({
     title: {
@@ -14,7 +15,14 @@ const blogSchema = mongoose.Schema({
         ref: 'user',
         default: null
     }
-}, { timestamps: true })
+}, { timestamps: true });
+
+
+blogSchema.pre("deleteOne", async function (next) {
+    const _id = this.getQuery()._id;
+    await commentModel.deleteMany({ blog: _id }); //deletes comments on blog before deleting the blog itself
+    next()
+})
 
 const blogModel = mongoose.model("blog", blogSchema);
 

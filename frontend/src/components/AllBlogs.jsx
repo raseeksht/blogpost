@@ -17,7 +17,7 @@ const BlogBox = ({ blog }) => {
     }
     return (
         <>
-            <div className='border-solid border-2 my-3' onClick={() => navigate(`/blog/${blog._id}`)}>
+            <div className='border-solid border-2 my-3 cursor-pointer' onClick={() => navigate(`/blog/${blog._id}`)}>
                 {blog.title}
                 <p>
                     {blog.content}
